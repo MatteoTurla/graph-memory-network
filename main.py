@@ -2,26 +2,24 @@ from model.GraphMemoryNet import GraphMemoryNetwork
 from utils.DataLoader import DataLoader
 from utils.utils import train, test
 from torch_geometric.datasets import Planetoid
-from ogb.nodeproppred import PygNodePropPredDataset
 import torch
 
 if __name__ == "__main__":
 
     name = "PubMed"
     dataset = Planetoid(root='./tmp/'+name, name=name)
-    
     print("number of features: ", dataset.num_features)
     print("number of classes: ", dataset.num_classes)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
 
-    dataloader = DataLoader(128, 0.4, 100, 14, transform=True)
+    dataloader = DataLoader(dataset, 0.4, 9, 3)
     
-    model = GraphMemoryNetwork(128, 4, 2, dataset.num_classes).to(device)
+    model = GraphMemoryNetwork(128, 4, 2, 3).to(device)
     #print(model.train())
 
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.01)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
