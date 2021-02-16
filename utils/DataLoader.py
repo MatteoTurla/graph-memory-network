@@ -6,11 +6,12 @@ import numpy as np
 import torch
 
 class DataLoader:
-    def __init__(self, dataset, test_size, num_parts, batch_size):
+    def __init__(self, dataset, test_size, num_parts, batch_size, transform = False):
         
         self.dataset = dataset
         self.graph = dataset[0]
-        self.graph.x = self.preprocess()
+        if transform:
+            self.graph.x = self.transform()
 
         self.n_nodes = self.graph.x.shape[0]
         idx_train, idx_test = train_test_split(
@@ -35,7 +36,7 @@ class DataLoader:
 
         return mask
 
-    def preprocess(self):
+    def transform(self):
         print("appling pca to planetoid dataset")
         x = self.graph.x.numpy()
         pca = PCA(n_components=128)
