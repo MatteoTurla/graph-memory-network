@@ -1,13 +1,13 @@
 from model.GraphMemoryNet import GraphMemoryNetwork
 from utils.DataLoader import DataLoader
 from utils.utils import train, test
-from torch_geometric.datasets import Planetoid
+from torch_geometric.datasets import Amazon
 import torch
 
 if __name__ == "__main__":
 
-    name = "PubMed"
-    dataset = Planetoid(root='./tmp/'+name, name=name)
+    name = "photo"
+    dataset = Amazon(root='tmp/'+name, name=name)
     print("number of features: ", dataset.num_features)
     print("number of classes: ", dataset.num_classes)
 
@@ -16,10 +16,10 @@ if __name__ == "__main__":
 
     dataloader = DataLoader(dataset, 0.4, 9, 3, transform=True)
     
-    model = GraphMemoryNetwork(128, 4, 2, 3).to(device)
+    model = GraphMemoryNetwork(128, 4, 5, dataset.num_classes).to(device)
     #print(model.train())
 
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.001)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
