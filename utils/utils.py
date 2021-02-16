@@ -34,7 +34,7 @@ def test(model, subgraph_loader, data, device):
     model.eval()
 
     y_true = data.y.squeeze()
-    out = model.inference(data.x, subgraph_loader, device)
+    out = model.inference(data.x, subgraph_loader, device).cpu()
 
     train_mask = data.train_mask
     test_mask = data.test_mask

@@ -41,7 +41,7 @@ class GraphMemoryNetwork(torch.nn.Module):
 				x = x_all[n_id].to(device)
 				x = layer(x, edge_index)[:batch_size]
 
-				xs.append(x.cpu())
+				xs.append(x)
 
 			x_all = torch.cat(xs, dim=0)
 
