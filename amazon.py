@@ -15,16 +15,17 @@ if __name__ == "__main__":
     print("device: ", device)
 
     dataloader = DataLoader(dataset, 0.4, 9, 3, transform=True)
-    
+
     model = GraphMemoryNetwork(128, 4, 5, dataset.num_classes).to(device)
-    #print(model.train())
+    # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.001)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
-        loss, train_acc = train(model, dataloader.train_loader, criterion, optimizer, device)
+        loss, train_acc = train(
+            model, dataloader.train_loader, criterion, optimizer, device)
         if e % 3 == 0:
-            train_acc, test_acc = test(model, dataloader.subgraph_loader, dataloader.graph, device)
+            train_acc, test_acc = test(
+                model, dataloader.subgraph_loader, dataloader.graph, device)
             print(loss, train_acc, test_acc)
-    
