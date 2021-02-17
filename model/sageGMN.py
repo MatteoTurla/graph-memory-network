@@ -30,10 +30,9 @@ class sageGMN(torch.nn.Module):
 
         X = self.embedding(X)
 
-        for layer in self.layers:
-            for adj in adjs:
-                edge_index, _, size = adj
-                X = layer(X, to_undirected(edge_index))[:size[1]]
+        for i, adj in enumerate(adjs):
+            edge_index, _, size = adj
+            X = self.layers[i](X, to_undirected(edge_index))[:size[1]]
 
         y_hat = self.feed_forward(X)
 
