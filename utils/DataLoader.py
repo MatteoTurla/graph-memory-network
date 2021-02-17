@@ -14,7 +14,7 @@ class DataLoader:
 
         if transform:
             self.graph.x = self.transform()
-            
+
         # rewrite mask 
         if test_size is not None:
             idx_train, idx_test = train_test_split(
@@ -31,7 +31,7 @@ class DataLoader:
 
         # used for inference, look to github how to implement it
         self.subgraph_loader = NeighborSampler(self.graph.edge_index, sizes=[-1], 
-                                      batch_size=1024, shuffle=False, return_e_id=False)
+                                      batch_size=512, shuffle=False, return_e_id=False)
             
     def create_mask(self, idx):
         mask = torch.zeros(self.n_nodes, dtype=torch.bool)

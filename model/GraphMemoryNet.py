@@ -1,7 +1,7 @@
 import torch
 from collections import OrderedDict
 from model.MultiHeadAttentionLayer import MultiHeadAttentionLayer
-from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import add_self_loops, to_undirected
 
 class GraphMemoryNetwork(torch.nn.Module):
 	def __init__(self, input_size, n_heads, n_layers, n_class):
@@ -36,6 +36,7 @@ class GraphMemoryNetwork(torch.nn.Module):
 			for batch_size, n_id, adj in subgraph_loader:
 
 				edge_index, _, _ = adj
+				edge_inedx = to_undirected(edge_index)
 				edge_index = edge_index.to(device)
 				
 				x = x_all[n_id].to(device)

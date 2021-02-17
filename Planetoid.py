@@ -16,7 +16,7 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # if test_size = None -> use standard mask
-    dataloader = DataLoader(dataset, num_parts=128, batch_size=32)
+    dataloader = DataLoader(dataset, num_parts=128, batch_size=32, test_size=0.5)
     
     model = GraphMemoryNetwork(dataset.num_features, 5, 2, dataset.num_classes).to(device)
     #print(model.train())
