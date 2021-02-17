@@ -17,11 +17,11 @@ def train(model, laoder, criterion, optimizer, device):
         adjs = [adj.to(device) for adj in adjs]
 
         x = data.x[n_id].to(device)
-        y = data.y[n_id[:batch_size]]
+        y = data.y[n_id[:batch_size]].to(device)
 
         optimizer.zero_grad()
 
-        out = model(x[, adjs)
+        out = model(x, adjs)
         loss = criterion(out, y)
 
         loss.backward()
@@ -34,20 +34,24 @@ def train(model, laoder, criterion, optimizer, device):
 
     return total_loss/total_batch, total_correct/total_example
 
+
 @ torch.no_grad()
 def test(model, subgraph_loader, data, device):
     model.eval()
 
-    y_true= data.y.squeeze()
-    out= model.inference(data.x, subgraph_loader, device).cpu()
+    y_true = data.y.squeeze()
+    out = model.inference(data.x, subgraph_loader, device).cpu()
 
-    train_mask= data.train_mask
-    test_mask= data.test_mask
+    train_mask = data.train_mask
+    test_mask = data.test_mask
 
-    train_acc= out[train_mask].argmax(dim=1).eq(y_true[train_mask]).sum().item() / train_mask.sum().item()
-    test_acc= out[test_mask].argmax(dim=1).eq(y_true[test_mask]).sum().item() / test_mask.sum().item()
+    train_acc = out[train_mask].argmax(dim=1).eq(
+        y_true[train_mask]).sum().item() / train_mask.sum().item()
+    test_acc = out[test_mask].argmax(dim=1).eq(
+        y_true[test_mask]).sum().item() / test_mask.sum().item()
 
     return train_acc, test_acc
+
 
 if __name__ == "__main__":
 
