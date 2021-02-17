@@ -4,7 +4,6 @@ from torch_geometric.data import DataLoader
 import torch
 
 # overwrite train function in utils, we do not have, mask there
-from torch_geometric.utils import add_self_loops
 def train(model, loader, criterion, optimizer, device):
     model.train()
 
@@ -13,7 +12,7 @@ def train(model, loader, criterion, optimizer, device):
 
     for data in loader:
         x = data.x.to(device)
-        edge_index = add_self_loops(data.edge_index)[0].to(device)
+        edge_index = data.edge_index.to(device)
         
         # in case y is a n x 1 tensor (ogb graph)
         y = data.y.squeeze().to(device)
@@ -41,7 +40,7 @@ def test(model, loader, device):
 
     for data in loader:
         x = data.x.to(device)
-        edge_index = add_self_loops(data.edge_index)[0].to(device)
+        edge_index = data.edge_index.to(device)
         
         # in case y is a n x 1 tensor (ogb graph)
         y = data.y.squeeze().to(device)
@@ -56,7 +55,7 @@ def test(model, loader, device):
 if __name__ == "__main__":
 
     dataset = GNNBenchmarkDataset(root='tmp/pattern', name="PATTERN")
-    dataset_val = GNNBenchmarkDataset(root='tmp/pattern_val', name="PATTERN", split="val")
+    dataset_val = GNNBenchmarkDataset(root='tmp/pattern', name="PATTERN", split="val")
 
     print("number of features: ", dataset.num_features)
     print("number of classes: ", dataset.num_classes)
@@ -64,17 +63,19 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
 
-    dataloader = DataLoader(dataset, batch_size=128)
-    dataloader_val = DataLoader(dataset_val, batch_size=128)
+    # torch geomtric dataloader
+    dataloader = DataLoader(dataset, batch_size=64)
+    dataloader_val = DataLoader(dataset_val, batch_size=64)
     
-    model = GraphMemoryNetwork(dataset.num_features, 5, 1, dataset.num_classes).to(device)
+    model = GraphMemoryNetwork(dataset.num_features, 1, 5, dataset.num_classes).to(device)
     #print(model.train())
 
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
         loss, train_acc = train(model, dataloader, criterion, optimizer, device)
-        val_acc = test(model, dataloader_val, device)
-        print(loss, train_acc, val_acc)
+        if e % 10 == 0:
+            val_acc = test(model, dataloader_val, device)
+            print(loss, train_acc, val_acc)
     
