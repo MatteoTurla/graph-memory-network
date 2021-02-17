@@ -5,7 +5,7 @@ from torch_geometric.data import NeighborSampler
 import torch
 
 
-def train(model, laoder, criterion, optimizer, device):
+def train(model, loader, criterion, optimizer, device):
     model.train()
 
     total_loss = total_batch = 0.0
