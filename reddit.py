@@ -1,6 +1,6 @@
 from model.GraphMemoryNet_2 import GraphMemoryNetwork_2
 from utils.DataLoader import DataLoader
-from utils.utils import train, test
+from utils.utils import cluster_train, test
 from torch_geometric.datasets import Reddit
 from torch_geometric.transforms import NormalizeFeatures
 import torch
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
-        loss, train_acc = train(
+        loss, train_acc = cluster_train(
             model, dataloader.train_loader, criterion, optimizer, device)
         if e % 3 == 0:
             train_acc, test_acc = test(
