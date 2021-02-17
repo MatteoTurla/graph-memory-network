@@ -1,7 +1,7 @@
 import torch
 from torch_geometric.utils import add_self_loops
 
-def train(model, loader, criterion, optimizer, device):
+def cluster_train(model, loader, criterion, optimizer, device):
     model.train()
 
     total_loss = total_batch = 0.0
@@ -9,12 +9,13 @@ def train(model, loader, criterion, optimizer, device):
 
     for data in loader:
         x = data.x.to(device)
-        edge_index = add_self_loops(data.edge_index)[0].to(device)
-        
-        # in case y is a n x 1 tensor (ogb graph)
-        y = data.y.squeeze()[data.train_mask].to(device)
+        edge_index = data.edge_index.to(device)
 
-        out = model(x, edge_index)[data.train_mask]
+        train_mask = data.train_mask
+        
+        y = data.y.squeeze()[train_mask].to(device)
+
+        out = model(x, edge_index)[train_mask]
 
         optimizer.zero_grad()
 
@@ -24,7 +25,7 @@ def train(model, loader, criterion, optimizer, device):
 
         total_loss += loss.item()
         total_batch += 1
-        total_example += data.train_mask.sum().item()
+        total_example += train_mask.sum().item()
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
 
     return total_loss/total_batch, total_correct/total_example

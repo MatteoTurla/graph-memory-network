@@ -35,8 +35,8 @@ class GraphMemoryNetwork(torch.nn.Module):
 			xs = []
 			for batch_size, n_id, adj in subgraph_loader:
 
-				edge_index, _, size = adj.to(device)
-				edge_index, _ = add_self_loops(edge_index)
+				edge_index, _, _ = adj
+				edge_index = edge_index.to(device)
 				
 				x = x_all[n_id].to(device)
 				x = layer(x, edge_index)[:batch_size]
@@ -45,7 +45,7 @@ class GraphMemoryNetwork(torch.nn.Module):
 
 			x_all = torch.cat(xs, dim=0)
 
-		#now feed forward
+		# now feed forward for the final classification
 		y_hat = self.feed_forward(x_all)
 
 		return y_hat
