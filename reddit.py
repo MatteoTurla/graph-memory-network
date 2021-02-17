@@ -17,7 +17,7 @@ def train(model, laoder, criterion, optimizer, device):
         adjs = [adj.to(device) for adj in adjs]
 
         x = data.x[n_id].to(device)
-        y = data.y[n_id[:batch_size]].to(device)
+        y = data.y[n_id[:batch_size]].squeeze().to(device)
 
         optimizer.zero_grad()
 
@@ -63,8 +63,7 @@ if __name__ == "__main__":
     data = dataset[0]
     train_idx = data.train_mask
 
-    print("bin count: ", data.y.bincount())
-    train_loader = NeighborSampler(data.edge_index, sizes=[25, 10, 10],
+    train_loader = NeighborSampler(data.edge_index, sizes=[25, 10, 10], node_idx=train_idx,
                                    batch_size=64, shuffle=True, return_e_id=False)
 
     # used for inference, look to github how to implement it
@@ -75,7 +74,7 @@ if __name__ == "__main__":
     print("device: ", device)
 
     model = sageGMN(
-        dataset.num_edge_features, dataset.num_classes, n_heads=4, n_layers=3).to(device)
+        dataset.num_node_features, dataset.num_classes, n_heads=4, n_layers=3).to(device)
     # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.001)
