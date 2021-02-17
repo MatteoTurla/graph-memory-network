@@ -6,22 +6,25 @@ import numpy as np
 import torch
 
 class DataLoader:
-    def __init__(self, dataset, test_size, num_parts, batch_size, transform = False):
+    def __init__(self, dataset, num_parts=1, batch_size=32, test_size=None,transform = False):
         
         self.dataset = dataset
         self.graph = dataset[0]
+        self.n_nodes = self.graph.x.shape[0]
+
         if transform:
             self.graph.x = self.transform()
+            
+        # rewrite mask 
+        if test_size is not None:
+            idx_train, idx_test = train_test_split(
+                np.array(list(range(self.n_nodes))),
+                test_size = test_size,
+                stratify = self.graph.y
+            )
 
-        self.n_nodes = self.graph.x.shape[0]
-        idx_train, idx_test = train_test_split(
-            np.array(list(range(self.n_nodes))),
-            test_size = test_size,
-            stratify = self.graph.y
-        )
-
-        self.graph.train_mask = self.create_mask(idx_train)
-        self.graph.test_mask = self.create_mask(idx_test)
+            self.graph.train_mask = self.create_mask(idx_train)
+            self.graph.test_mask = self.create_mask(idx_test)
 
         self.cluster_data = ClusterData(self.graph, num_parts=num_parts, save_dir=self.dataset.processed_dir)
         self.train_loader = ClusterLoader(self.cluster_data, batch_size=batch_size, shuffle=True)

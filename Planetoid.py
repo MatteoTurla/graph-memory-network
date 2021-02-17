@@ -15,9 +15,10 @@ if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
 
-    dataloader = DataLoader(dataset, 0.4, 128, 32)
+    # if test_size = None -> use standard mask
+    dataloader = DataLoader(dataset, num_parts=128, batch_size=32)
     
-    model = GraphMemoryNetwork(dataset.num_classes, 4, 2, dataset.num_features).to(device)
+    model = GraphMemoryNetwork(dataset.num_features, 5, 2, dataset.num_classes).to(device)
     #print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.01)
