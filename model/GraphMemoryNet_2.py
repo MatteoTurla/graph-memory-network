@@ -38,7 +38,7 @@ class GraphMemoryNetwork_2(torch.nn.Module):
         return y_hat
 
     def inference(self, x_all, subgraph_loader, device):
-        x_all = self.embedding(x_all)
+        x_all = self.embedding(x_all.to(device))
 
         # used to evaluate the model in a faster and memory efficient way
         for layer in self.layers:
