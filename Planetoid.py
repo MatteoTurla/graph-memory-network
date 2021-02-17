@@ -8,7 +8,7 @@ import torch
 if __name__ == "__main__":
 
     name = "PubMed"
-    dataset = Planetoid(root='./tmp/'+name, name=name, transform=NormalizeFeatures())
+    dataset = Planetoid(root='tmp/'+name, name=name, transform=NormalizeFeatures())
     print("number of features: ", dataset.num_features)
     print("number of classes: ", dataset.num_classes)
 
