@@ -9,9 +9,9 @@ class GraphMemoryNetwork_2(torch.nn.Module):
 
 
         self.embedding = torch.nn.Sequential(OrderedDict([
-          ('fc1', torch.nn.Linear(input_size, 128)),
-          ('relu1', torch.nn.ReLU()),
-          ('layer_norm', torch.nn.LayerNorm(128)),
+            ('fc1', torch.nn.Linear(input_size, 128)),
+            ('relu1', torch.nn.ReLU()),
+            ('layer_norm', torch.nn.LayerNorm(128)),
         ]))
 		
 		self.layers = self.heads = torch.nn.ModuleList(

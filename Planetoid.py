@@ -1,4 +1,4 @@
-from model.GraphMemoryNet import GraphMemoryNetwork, GraphMemoryNetwork_2
+from model.GraphMemoryNet_2 import GraphMemoryNetwork, GraphMemoryNetwork_2
 from utils.DataLoader import DataLoader
 from utils.utils import cluster_train, test
 from torch_geometric.datasets import Planetoid
