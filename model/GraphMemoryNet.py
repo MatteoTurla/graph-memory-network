@@ -37,7 +37,7 @@ class GraphMemoryNetwork(torch.nn.Module):
 
 				edge_index, _, _ = adj
 				# we are using neighbours sampler that return a direct bipartite graph
-				edge_inedx = to_undirected(edge_index)
+				edge_index = to_undirected(edge_index)
 				edge_index = edge_index.to(device)
 				
 				x = x_all[n_id].to(device)
