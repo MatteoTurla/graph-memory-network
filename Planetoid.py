@@ -1,4 +1,4 @@
-from model.GraphMemoryNet import GraphMemoryNetwork
+from model.GraphMemoryNet import GraphMemoryNetwork, GraphMemoryNetwork_2
 from utils.DataLoader import DataLoader
 from utils.utils import cluster_train, test
 from torch_geometric.datasets import Planetoid
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # if test_size = None -> use standard mask
     dataloader = DataLoader(dataset, num_parts=128, batch_size=32, test_size=0.5)
     
-    model = GraphMemoryNetwork(dataset.num_features, 5, 2, dataset.num_classes).to(device)
+    model = GraphMemoryNetwork_2(dataset.num_features, dataset.num_classes, n_heads=2, n_layers=3).to(device)
     #print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.01)
