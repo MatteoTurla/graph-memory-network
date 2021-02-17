@@ -32,8 +32,8 @@ class sageGMN(torch.nn.Module):
 
         for layer in self.layers:
             for adj in adjs:
-                edge_index, _, size = adj:
-                    X = layer(X, edge_index.to_undirected())[:size[1]]
+                edge_index, _, size = adj
+                X = layer(X, edge_index.to_undirected())[:size[1]]
 
         y_hat = self.feed_forward(X)
 
