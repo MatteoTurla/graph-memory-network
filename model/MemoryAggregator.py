@@ -37,7 +37,8 @@ class MemoryAggregator(torch.nn.Module):
         c = edge_index[1, :]
 
         sparse_A = torch.sum(Q[r] * K[c], axis=-1)
-        dense_A = torch.sparse.FloatTensor(torch.vstack((r, c)), sparse_A)
+        dense_A = torch.sparse.FloatTensor(torch.vstack(
+            (r, c)), sparse_A, torch.Size([X.shape[0], X.shape[0]]))
 
         masked_A = torch.div(dense_A, self.dk)
 
