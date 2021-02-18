@@ -2,6 +2,7 @@ from model.GMNclassification import GMNclassification
 from torch_geometric.data import DataLoader
 from ogb.graphproppred import PygGraphPropPredDataset
 import torch
+from torch_geometric.utils import contains_isolated_nodes
 
 from ogb.graphproppred import Evaluator
 
@@ -16,6 +17,10 @@ def train(model, loader, criterion, optimizer, device):
         data = data.to(device)
         x = data.x.float()
         edge_index = data.edge_index
+
+        if contains_isolated_nodes(edge_index):
+            print("isolated node")
+            continue
 
         # in case y is a n x 1 tensor (ogb graph)
         y = data.y.squeeze()
