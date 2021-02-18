@@ -57,8 +57,8 @@ def test(model, loader, device):
         total_example += out.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
 
-        y_true = torch.vstack(y_true, y)
-        y_pred = torch.vstack(y_pred, out.argmax(dim=-1))
+        y_true = torch.vstack((y_true, y))
+        y_pred = torch.vstack((y_pred, out.argmax(dim=-1)))
 
     return total_correct/total_example, {"y_true": y_true, "y_pred": y_pred}
 
