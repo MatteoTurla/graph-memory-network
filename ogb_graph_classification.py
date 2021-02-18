@@ -45,14 +45,14 @@ def test(model, loader, device):
     y_true = []
     y_pred = []
     for data in loader:
-        data = data.to(device)
-        x = data.x.float()
-        edge_index = data.edge_index
+        x = data.x.float().to(device)
+        edge_index = data.edge_index.to(device)
+        batch = data.batch.to(device)
 
         # in case y is a n x 1 tensor (ogb graph)
-        y = data.y.squeeze()
+        y = data.y.squeeze().cpu()
 
-        out = model(x, edge_index, data.batch).cpu()
+        out = model(x, edge_index, batch).cpu()
 
         total_example += out.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
