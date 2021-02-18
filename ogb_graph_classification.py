@@ -42,8 +42,8 @@ def test(model, loader, device):
 
     total_example = total_correct = 0.0
 
-    y_true = []
-    y_pred = []
+    y_true = torch.Tensor([[]])
+    y_pred = torch.Tensor([[]])
     for data in loader:
         x = data.x.float().to(device)
         edge_index = data.edge_index.to(device)
@@ -57,8 +57,8 @@ def test(model, loader, device):
         total_example += out.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
 
-        y_true.append(list(y))
-        y_pred.append(list(out.argmax(dim=-1)))
+        y_true = torch.vstack(y_true, y)
+        y_pred = torch.vstack(y_pred, out.argmax(dim=-1))
 
     return total_correct/total_example, {"y_true": y_true, "y_pred": y_pred}
 
@@ -86,9 +86,12 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
     criterion = torch.nn.CrossEntropyLoss()
 
-    for e in range(30):
+    for e in range(1):
         train_loss, train_acc = train(
             model, train_loader, criterion, optimizer, device)
         if e % 10 == 0:
             loss_acc, dict_evaluator = test(model, valid_loader, device)
             print(train_loss, train_acc, loss_acc)
+
+    evaluator = Evaluator(name="ogbg-molhiv")
+    result_dict = evaluator.eval(dict_evaluator)
