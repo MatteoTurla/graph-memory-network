@@ -52,13 +52,13 @@ def test(model, loader, device):
         # in case y is a n x 1 tensor (ogb graph)
         y = data.y.squeeze()
 
-        out = model(x, edge_index, data.batch)
+        out = model(x, edge_index, data.batch).cpu()
 
         total_example += out.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
 
-        y_true.append(list(y).cpu())
-        y_pred.append(list(out.argmax(dim=-1).cpu()))
+        y_true.append(list(y))
+        y_pred.append(list(out.argmax(dim=-1)))
 
     return total_correct/total_example, {"y_true": y_true, "y_pred": y_pred}
 
