@@ -42,8 +42,8 @@ def test(model, loader, device):
 
     total_example = total_correct = 0.0
 
-    y_true = torch.Tensor([[]])
-    y_pred = torch.Tensor([[]])
+    y_true = torch.Tensor()
+    y_pred = torch.Tensor()
     for data in loader:
         x = data.x.float().to(device)
         edge_index = data.edge_index.to(device)
@@ -57,10 +57,13 @@ def test(model, loader, device):
         total_example += out.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
 
-        y_true = torch.vstack((y_true, y.T))
-        y_pred = torch.vstack((y_pred, out.argmax(dim=-1).T))
+        y_true = torch.cat((y_true, y))
+        y_pred = torch.cat((y_pred, out.argmax(dim=-1).T))
 
-    return total_correct/total_example, {"y_true": y_true, "y_pred": y_pred}
+    dict_eval = {"y_true": torch.unsqueeze(
+        y_true, 1), "y_pred": torch.unsqueeze(y_pred, 1)}
+
+    return total_correct/total_example, dict_eval
 
 
 if __name__ == "__main__":
