@@ -1,4 +1,4 @@
-from model.GMNclassification import GMNregression
+from model.GMNclassification import GMNclassification
 from torch_geometric.data import DataLoader
 from ogb.graphproppred import PygGraphPropPredDataset
 import torch
@@ -13,11 +13,12 @@ def train(model, loader, criterion, optimizer, device):
     total_example = total_correct = 0.0
 
     for data in loader:
-        x = data.x.to(device)
-        edge_index = data.edge_index.to(device)
+        data = data.to(device)
+        x = data.x.float()
+        edge_index = data.edge_index
 
         # in case y is a n x 1 tensor (ogb graph)
-        y = data.y.squeeze().to(device)
+        y = data.y.squeeze()
 
         out = model(x, edge_index, data.batch)
 
@@ -44,11 +45,12 @@ def test(model, loader, device):
     y_true = []
     y_pred = []
     for data in loader:
-        x = data.x.to(device)
-        edge_index = data.edge_index.to(device)
+        data = data.to(device)
+        x = data.x.float()
+        edge_index = data.edge_index
 
         # in case y is a n x 1 tensor (ogb graph)
-        y = data.y.squeeze().to(device)
+        y = data.y.squeeze()
 
         out = model(x, edge_index, data.batch)
 
