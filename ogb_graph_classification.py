@@ -70,11 +70,11 @@ if __name__ == "__main__":
 
     split_idx = dataset.get_idx_split()
     train_loader = DataLoader(
-        dataset[split_idx["train"]], batch_size=32, shuffle=True)
+        dataset[split_idx["train"]], batch_size=128, shuffle=True)
     valid_loader = DataLoader(
-        dataset[split_idx["valid"]], batch_size=32, shuffle=False)
+        dataset[split_idx["valid"]], batch_size=128, shuffle=False)
     test_loader = DataLoader(
-        dataset[split_idx["test"]], batch_size=32, shuffle=False)
+        dataset[split_idx["test"]], batch_size=128, shuffle=False)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
