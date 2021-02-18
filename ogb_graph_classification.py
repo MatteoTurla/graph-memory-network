@@ -69,7 +69,7 @@ def test(model, loader, device):
 if __name__ == "__main__":
 
     # Download and process data at './dataset/ogbg_molhiv/'
-    dataset = PygGraphPropPredDataset(name="ogbg-molhiv", root='dataset/')
+    dataset = PygGraphPropPredDataset(name="ogbg-ppa", root='dataset/')
 
     split_idx = dataset.get_idx_split()
     train_loader = DataLoader(
@@ -89,14 +89,14 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
     criterion = torch.nn.CrossEntropyLoss()
 
-    for e in range(1):
+    for e in range(30):
         train_loss, train_acc = train(
             model, train_loader, criterion, optimizer, device)
         if e % 10 == 0:
             loss_acc, dict_evaluator = test(model, valid_loader, device)
             print(train_loss, train_acc, loss_acc)
 
-    evaluator = Evaluator(name="ogbg-molhiv")
+    evaluator = Evaluator(name="ogbg-ppa")
     result_dict = evaluator.eval(dict_evaluator)
 
     print(result_dict)
