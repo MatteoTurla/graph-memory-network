@@ -2,6 +2,7 @@ from model.GMNregression import GMNregression
 from torch_geometric.datasets import ZINC
 from torch_geometric.data import DataLoader
 import torch
+from torch_geometric.transforms import NormalizeFeatures
 
 
 def train(model, loader, criterion, optimizer, device):
@@ -58,11 +59,13 @@ if __name__ == "__main__":
 
     # graph regression
 
-    dataset_train = ZINC(root='tmp/zinc', subset=True, split="train")
-    dataset_val = ZINC(root='tmp/zinc', subset=True, split="val")
+    dataset_train = ZINC(root='tmp/zinc', subset=True,
+                         split="train",  pre_transform=NormalizeFeatures())
+    dataset_val = ZINC(root='tmp/zinc', subset=True,
+                       split="val",  pre_transform=NormalizeFeatures())
 
-    print("number of features: ", dataset.num_features)
-    print("number of classes: ", dataset.num_classes)
+    print("number of features: ", dataset_train.num_features)
+    print("number of classes: ", dataset_train.num_classes)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
@@ -72,7 +75,7 @@ if __name__ == "__main__":
     val_loader = DataLoader(dataset_val, batch_size=64)
 
     model = GMNregression(
-        dataset.num_features, dataset.num_classes, 1, 5).to(device)
+        dataset_train.num_features, dataset_train.num_classes, 1, 5).to(device)
     # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
