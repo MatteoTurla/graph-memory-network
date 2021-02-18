@@ -95,3 +95,5 @@ if __name__ == "__main__":
 
     evaluator = Evaluator(name="ogbg-molhiv")
     result_dict = evaluator.eval(dict_evaluator)
+
+    print(result_dict)
