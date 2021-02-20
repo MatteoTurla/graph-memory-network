@@ -25,7 +25,7 @@ if __name__ == "__main__":
     dataloader_train = DataLoader(dataset_train, batch_size=128, shuffle=True)
     dataloader_val = DataLoader(dataset_val, batch_size=128)
 
-    model = GraphMemoryNetwork(
+    model = GMNnode(
         n_features, n_class, n_heads=4, n_layers=4).to(device)
     # print(model.train())
 
