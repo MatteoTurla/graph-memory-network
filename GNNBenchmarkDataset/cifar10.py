@@ -2,7 +2,7 @@ from model.GMN import GMNgraph
 from torch_geometric.datasets import GNNBenchmarkDataset
 from torch_geometric.data import DataLoader
 import torch
-from utils import batch_train, batch_test
+from utils.utils import batch_train, batch_test
 
 if __name__ == "__main__":
 
@@ -11,6 +11,8 @@ if __name__ == "__main__":
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
 
+    n_features = dataset_train.num_features
+    n_class = dataset_train.num_classes
     print("number of features: ", dataset_train.num_features)
     print("number of classes: ", dataset_train.num_classes)
     print("n graphs train: ", len(dataset_train))
@@ -20,11 +22,11 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # torch geomtric dataloader
-    dataloader_train = DataLoader(dataset, batch_size=64, shuffle=True)
+    dataloader_train = DataLoader(dataset_train, batch_size=64, shuffle=True)
     dataloader_val = DataLoader(dataset_val, batch_size=64)
 
     model = GMNgraph(
-        dataset.num_features, dataset.num_classes, 1, 8).to(device)
+        n_features, n_class, 1, 8).to(device)
     # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
