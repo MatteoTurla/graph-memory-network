@@ -6,7 +6,7 @@ from utils.utils import batch_train, batch_test
 
 if __name__ == "__main__":
 
-    name = "pattern"
+    name = "PATTERN"
     dataset_train = GNNBenchmarkDataset(root='tmp/', name=name)
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
