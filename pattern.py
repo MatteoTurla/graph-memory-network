@@ -2,7 +2,7 @@ from model.GMN import GMNnode
 from torch_geometric.datasets import GNNBenchmarkDataset
 from torch_geometric.data import DataLoader
 import torch
-from utils import batch_train, batch_test
+from utils.utils import batch_train, batch_test
 
 if __name__ == "__main__":
 
