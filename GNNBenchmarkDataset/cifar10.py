@@ -11,8 +11,10 @@ if __name__ == "__main__":
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
 
-    print("number of features: ", dataset.num_features)
-    print("number of classes: ", dataset.num_classes)
+    print("number of features: ", dataset_train.num_features)
+    print("number of classes: ", dataset_train.num_classes)
+    print("n graphs train: ", len(dataset_train))
+    print("n graphs val: ", len(dataset_val))
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
