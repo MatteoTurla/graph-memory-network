@@ -58,10 +58,12 @@ def subgraph_test(model, subgraph_loader, data, device):
     return train_acc, test_acc
 
 
-def batch_train(model, loader, criterion, optimizer, device):
+def batch_train(model, loader, criterion, optimizer, device, reduce=False):
     """
     train on N different small graph batched togheter using DataLoader utils
     we do not have a train mask but simply 2 different dataloader, one for train and one for test
+
+    for graph classification set reduce=True
     """
     model.train()
 
@@ -71,11 +73,14 @@ def batch_train(model, loader, criterion, optimizer, device):
     for data in loader:
         x = data.x.to(device)
         edge_index = data.edge_index.to(device)
-        batch = data.batch.to(device)
 
         y = data.y.squeeze().to(device)
 
-        out = model(x, edge_index, batch)
+        if reduce:
+            batch = data.batch.to(device)
+            out = model(x, edge_index, batch)
+        else:
+            out = model(x, edge_index)
 
         optimizer.zero_grad()
 
@@ -92,18 +97,21 @@ def batch_train(model, loader, criterion, optimizer, device):
 
 
 @torch.no_grad()
-def batch_test(model, loader, device):
+def batch_test(model, loader, device, reduce=False):
     model.eval()
     total_example = total_correct = 0.0
 
     for data in loader:
         x = data.x.to(device)
         edge_index = data.edge_index.to(device)
-        batch = data.batch.to(device)
 
         y = data.y.squeeze().to(device)
 
-        out = model(x, edge_index, batch)
+        if reduce:
+            batch = data.batch.to(device)
+            out = model(x, edge_index, batch)
+        else:
+            out = model(x, edge_index)
 
         total_example += y.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
