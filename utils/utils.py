@@ -71,10 +71,11 @@ def batch_train(model, loader, criterion, optimizer, device):
     for data in loader:
         x = data.x.to(device)
         edge_index = data.edge_index.to(device)
+        batch = data.batch.to(device)
 
         y = data.y.squeeze().to(device)
 
-        out = model(x, edge_index)
+        out = model(x, edge_index, batch)
 
         optimizer.zero_grad()
 
@@ -98,10 +99,11 @@ def batch_test(model, loader, device):
     for data in loader:
         x = data.x.to(device)
         edge_index = data.edge_index.to(device)
+        batch = data.batch.to(device)
 
         y = data.y.squeeze().to(device)
 
-        out = model(x, edge_index)
+        out = model(x, edge_index, batch)
 
         total_example += y.shape[0]
         total_correct += out.argmax(dim=-1).eq(y).sum().item()
