@@ -30,9 +30,6 @@ class MemoryAggregator(torch.nn.Module):
         K = torch.matmul(X, self.Wk)
         V = torch.matmul(X, self.Wv)
 
-        #r = torch.cat((edge_index[0,:], edge_index[1,:]))
-        #c = torch.cat((edge_index[1,:], edge_index[0,:]))
-
         r = edge_index[0, :]
         c = edge_index[1, :]
 
