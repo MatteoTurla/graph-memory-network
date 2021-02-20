@@ -22,11 +22,11 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # torch geomtric dataloader
-    dataloader_train = DataLoader(dataset_train, batch_size=64, shuffle=True)
-    dataloader_val = DataLoader(dataset_val, batch_size=64)
+    dataloader_train = DataLoader(dataset_train, batch_size=256, shuffle=True)
+    dataloader_val = DataLoader(dataset_val, batch_size=256)
 
     model = GMNgraph(
-        n_features, n_class, 1, 8).to(device)
+        n_features, n_class, 4, 3).to(device)
     # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
