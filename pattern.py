@@ -22,8 +22,8 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # torch geomtric dataloader
-    dataloader_train = DataLoader(dataset_train, batch_size=256, shuffle=True)
-    dataloader_val = DataLoader(dataset_val, batch_size=256)
+    dataloader_train = DataLoader(dataset_train, batch_size=128, shuffle=True)
+    dataloader_val = DataLoader(dataset_val, batch_size=128)
 
     model = GMNnode(
         n_features, n_class, n_heads=4, n_layers=16).to(device)

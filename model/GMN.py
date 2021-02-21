@@ -119,9 +119,9 @@ class sageGMN(torch.nn.Module):
         super().__init__()
 
         self.embedding = torch.nn.Sequential(OrderedDict([
-            ('fc1', torch.nn.Linear(input_size, 128)),
-            ('relu1', torch.nn.ReLU()),
-            ('layer_norm', torch.nn.LayerNorm(128)),
+            ('fc1', torch.nn.Linear(input_size, 128, bias=False)),
+            #('relu1', torch.nn.ReLU()),
+            #('layer_norm', torch.nn.LayerNorm(128)),
         ]))
 
         self.layers = torch.nn.ModuleList(
@@ -131,9 +131,9 @@ class sageGMN(torch.nn.Module):
         self.feed_forward = torch.nn.Sequential(OrderedDict([
             ('end_1', torch.nn.Linear(128, 512)),
             ('relu1', torch.nn.ReLU()),
-            ('end_2', torch.nn.Linear(512, 512)),
-            ('relu2', torch.nn.ReLU()),
-            ('end_3', torch.nn.Linear(512, n_class))
+            ('end_2', torch.nn.Linear(512, n_class)),
+            #('relu2', torch.nn.ReLU()),
+            #('end_3', torch.nn.Linear(512, n_class))
         ]))
 
     def forward(self, X, adjs):
