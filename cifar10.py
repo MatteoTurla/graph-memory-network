@@ -6,7 +6,7 @@ from utils.utils import batch_train, batch_test
 
 if __name__ == "__main__":
 
-    name = "CIFAR10"
+    name = "MNIST"
     dataset_train = GNNBenchmarkDataset(root='tmp/', name=name)
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
@@ -29,12 +29,12 @@ if __name__ == "__main__":
         n_features, n_class, 4, 3).to(device)
     # print(model.train())
 
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
+    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0, lr=0.01)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(30):
         loss, train_acc = batch_train(
-            model, dataloader_train, criterion, optimizer, device)
+            model, dataloader_train, criterion, optimizer, device, reduce=True)
         if e % 10 == 0:
-            val_acc = batch_test(model, dataloader_val, device)
+            val_acc = batch_test(model, dataloader_val, device, reduce=True)
             print(loss, train_acc, val_acc)
