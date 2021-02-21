@@ -26,7 +26,7 @@ if __name__ == "__main__":
     dataloader_val = DataLoader(dataset_val, batch_size=64)
 
     model = GMNnode(
-        n_features, n_class, n_heads=4, n_layers=32).to(device)
+        n_features, n_class, n_heads=2, n_layers=32).to(device)
     # print(model.train())
 
     optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
