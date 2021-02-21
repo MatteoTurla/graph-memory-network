@@ -14,15 +14,15 @@ class MemoryAggregator(torch.nn.Module):
 
         # query matrix
         Wq = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.xavier_uniform_(Wq)
+        torch.nn.init.kaiming_normal_(Wq)
         self.Wq = torch.nn.Parameter(Wq)
         # key matrix
         Wk = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.xavier_uniform_(Wk)
+        torch.nn.init.kaiming_normal_(Wk)
         self.Wk = torch.nn.Parameter(Wk)
         # value matrix
         Wv = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.xavier_uniform_(Wv)
+        torch.nn.init.kaiming_normal_(Wv)
         self.Wv = torch.nn.Parameter(Wv)
 
     def forward(self, X, edge_index):
