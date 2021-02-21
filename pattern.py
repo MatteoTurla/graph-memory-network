@@ -22,14 +22,15 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # torch geomtric dataloader
-    dataloader_train = DataLoader(dataset_train, batch_size=32, shuffle=True)
-    dataloader_val = DataLoader(dataset_val, batch_size=32)
+    dataloader_train = DataLoader(dataset_train, batch_size=128, shuffle=True)
+    dataloader_val = DataLoader(dataset_val, batch_size=128)
 
     model = GMNnode(
-        n_features, n_class, n_heads=4, n_layers=32).to(device)
+        n_features, n_class, n_heads=8, n_layers=10).to(device)
     # print(model.train())
 
-    optimizer = torch.optim.Adam(model.parameters(), weight_decay=0.0)
+    optimizer = torch.optim.Adam(
+        model.parameters(), weight_decay=0.0, lr=0.0005)
     criterion = torch.nn.CrossEntropyLoss()
 
     for e in range(31):

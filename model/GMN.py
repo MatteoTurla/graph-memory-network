@@ -16,7 +16,7 @@ class GMNnode(torch.nn.Module):
         self.embedding = torch.nn.Sequential(OrderedDict([
             ('fc1', torch.nn.Linear(input_size, 128)),
             #('relu1', torch.nn.ReLU()),
-            ('layer_norm', torch.nn.LayerNorm(128)),
+            #('layer_norm', torch.nn.LayerNorm(128)),
         ]))
 
         self.layers = torch.nn.ModuleList(
@@ -79,8 +79,6 @@ class GMNgraph(torch.nn.Module):
 
         self.embedding = torch.nn.Sequential(OrderedDict([
             ('fc1', torch.nn.Linear(input_size, 128)),
-            ('relu1', torch.nn.ReLU()),
-            ('layer_norm', torch.nn.LayerNorm(128)),
         ]))
 
         self.layers = torch.nn.ModuleList(
