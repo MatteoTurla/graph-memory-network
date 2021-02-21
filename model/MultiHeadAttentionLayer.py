@@ -15,7 +15,7 @@ class MultiHeadAttentionLayer(torch.nn.Module):
 
         # multi-head matrix
         W0 = torch.Tensor(self.input_size, self.input_size)
-        torch.nn.init.xavier_uniform_(W0)
+        torch.nn.init.kaiming_normal_(W0)
         self.W0 = torch.nn.Parameter(W0)
 
         self.normalization_layer1 = torch.nn.LayerNorm(self.input_size)
