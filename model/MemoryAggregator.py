@@ -39,7 +39,7 @@ class MemoryAggregator(torch.nn.Module):
 
         masked_A = torch.div(dense_A, self.dk)
 
-        attention = torch.matmul(
-            torch.sparse.softmax(masked_A, dim=1).to_dense(), V)
+        attention = torch.sparse.mm(
+            torch.sparse.softmax(masked_A, dim=1), V)
 
         return attention
