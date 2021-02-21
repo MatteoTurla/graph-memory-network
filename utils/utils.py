@@ -72,7 +72,7 @@ def batch_train(model, loader, criterion, optimizer, device, reduce=False):
 
     for data in loader:
         x = data.x.to(device)
-        edge_index = data.edge_index.to(device)
+        edge_index = add_self_loops(data.edge_index)[0].to(device)
 
         y = data.y.squeeze().to(device)
 
@@ -103,7 +103,7 @@ def batch_test(model, loader, device, reduce=False):
 
     for data in loader:
         x = data.x.to(device)
-        edge_index = data.edge_index.to(device)
+        edge_index = add_self_loops(data.edge_index)[0].to(device)
 
         y = data.y.squeeze().to(device)
 
