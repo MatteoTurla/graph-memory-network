@@ -18,9 +18,9 @@ class MemoryAggregator(torch.nn.Module):
         self.Wv = torch.nn.Linear(input_size, head_size, bias=False)
 
     def forward(self, X, edge_index):
-        Q = torch.matmul(X, self.Wq)
-        K = torch.matmul(X, self.Wk)
-        V = torch.matmul(X, self.Wv)
+        Q = self.Wq(X)
+        K = self.Wk(X)
+        V = self.Wv(X)
 
         sparse_A = torch.sum(Q[edge_index[0, :]] *
                              K[edge_index[1, :]], axis=-1)
