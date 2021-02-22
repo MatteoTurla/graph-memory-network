@@ -7,23 +7,15 @@ class MemoryAggregator(torch.nn.Module):
 
         super().__init__()
 
-        self.input_size = input_size
-        self.n_head = n_heads
-        self.head_size = input_size // n_heads
-        self.dk = math.sqrt(self.head_size)
+        head_size = input_size // n_heads
+        self.dk = math.sqrt(head_size)
 
         # query matrix
-        Wq = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.kaiming_normal_(Wq)
-        self.Wq = torch.nn.Parameter(Wq)
+        self.Wq = torch.nn.Linear(input_size, head_size, bias=False)
         # key matrix
-        Wk = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.kaiming_normal_(Wk)
-        self.Wk = torch.nn.Parameter(Wk)
+        self.Wk = torch.nn.Linear(input_size, head_size, bias=False)
         # value matrix
-        Wv = torch.Tensor(self.input_size, self.head_size)
-        torch.nn.init.kaiming_normal_(Wv)
-        self.Wv = torch.nn.Parameter(Wv)
+        self.Wv = torch.nn.Linear(input_size, head_size, bias=False)
 
     def forward(self, X, edge_index):
         Q = torch.matmul(X, self.Wq)

@@ -7,24 +7,19 @@ class MultiHeadAttentionLayer(torch.nn.Module):
     def __init__(self, input_size, n_heads):
         super().__init__()
 
-        self.input_size = input_size
-        self.n_heads = n_heads
-
         self.heads = torch.nn.ModuleList(
-            [MemoryAggregator(self.input_size, self.n_heads) for i in range(self.n_heads)])
+            [MemoryAggregator(input_size, n_heads) for i in range(n_heads)])
 
         # multi-head matrix
-        W0 = torch.Tensor(self.input_size, self.input_size)
-        torch.nn.init.kaiming_normal_(W0)
-        self.W0 = torch.nn.Parameter(W0)
+        self.W0 = torch.nn.Linear(input_size, head_size, bias=False)
 
-        self.normalization_layer1 = torch.nn.LayerNorm(self.input_size)
-        self.normalization_layer2 = torch.nn.LayerNorm(self.input_size)
+        self.normalization_layer1 = torch.nn.LayerNorm(input_size)
+        self.normalization_layer2 = torch.nn.LayerNorm(input_size)
 
         self.feed_forward = torch.nn.Sequential(OrderedDict([
-            ('fc1', torch.nn.Linear(self.input_size, 512)),
+            ('fc1', torch.nn.Linear(input_size, 512)),
             ('relu1', torch.nn.ReLU()),
-            ('fc2', torch.nn.Linear(512, self.input_size)),
+            ('fc2', torch.nn.Linear(512, input_size)),
         ]))
 
     def forward(self, X, edge_index):

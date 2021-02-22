@@ -13,10 +13,9 @@ class GMNnode(torch.nn.Module):
     def __init__(self, input_size,  n_class, n_heads=1, n_layers=1):
         super().__init__()
 
+        # as described in GNNbenchmarking papaer
         self.embedding = torch.nn.Sequential(OrderedDict([
             ('fc1', torch.nn.Linear(input_size, 128)),
-            #('relu1', torch.nn.ReLU()),
-            #('layer_norm', torch.nn.LayerNorm(128)),
         ]))
 
         self.layers = torch.nn.ModuleList(
