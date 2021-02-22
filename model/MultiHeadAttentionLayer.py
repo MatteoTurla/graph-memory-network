@@ -11,7 +11,7 @@ class MultiHeadAttentionLayer(torch.nn.Module):
             [MemoryAggregator(input_size, n_heads) for i in range(n_heads)])
 
         # multi-head matrix
-        self.W0 = torch.nn.Linear(input_size, head_size, bias=False)
+        self.W0 = torch.nn.Linear(input_size, input_size, bias=False)
 
         self.normalization_layer1 = torch.nn.LayerNorm(input_size)
         self.normalization_layer2 = torch.nn.LayerNorm(input_size)
