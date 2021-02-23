@@ -1,6 +1,7 @@
 from model.GMN import GMNgraph
 from torch_geometric.datasets import ZINC
 from torch_geometric.data import DataLoader
+from torch_geometric.utils import add_self_loops
 import torch
 
 
