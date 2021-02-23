@@ -18,7 +18,7 @@ def train(model, loader, optimizer, criterion, device):
 
         batch = data.batch.to(device)
 
-        out = model(x, edge_index, batch)
+        out = model(x, edge_index, batch).squeeze()
 
         optimizer.zero_grad()
         loss = criterion(out, y)
@@ -43,9 +43,9 @@ def test(model, loader, device):
         edge_index = add_self_loops(data.edge_index)[0].to(device)
         y = data.y.squeeze().to(device)
         batch = data.batch.to(device)
-        out = model(x, edge_index, batch)
+        out = model(x, edge_index, batch).squeeze()
 
-        loss = criterion(out.squeeze(), y)
+        loss = criterion(out, y)
 
         total_batches += 1
         running_loss += loss.item()
