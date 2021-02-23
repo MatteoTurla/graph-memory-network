@@ -37,12 +37,12 @@ class MemoryAggregator(torch.nn.Module):
         # divide by the column dimension of K
         Q_dot_Kt_stable = torch.div(Q_dot_Kt, self.dk)
 
-        # masked_A = torch.sparse.FloatTensor(
-        #    edge_index, Q_dot_Kt_stable, torch.Size([X.shape[0], X.shape[0]]))
+        masked_A = torch.sparse.FloatTensor(
+            edge_index, Q_dot_Kt_stable, torch.Size([X.shape[0], X.shape[0]]))
 
-        # softmax_A = torch.sparse.softmax(masked_A, dim=1)
-        softmax_A = stable_neighbors_softmax(
-            Q_dot_Kt_stable, edge_index, X.shape[0])
+        softmax_A = torch.sparse.softmax(masked_A, dim=1)
+        # softmax_A = stable_neighbors_softmax(
+        #    Q_dot_Kt_stable, edge_index, X.shape[0])
         sparse_softmax_A = torch.sparse.FloatTensor(
             edge_index, softmax_A, torch.Size([X.shape[0], X.shape[0]]))
 
