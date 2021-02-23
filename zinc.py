@@ -37,7 +37,7 @@ def test(model, loader, device):
 
     running_loss = total_batches = 0.0
     y_hat = []
-    y = []
+    y_true = []
     for data in loader:
         x = data.x.float().to(device)
         edge_index = add_self_loops(data.edge_index)[0].to(device)
@@ -45,13 +45,13 @@ def test(model, loader, device):
         batch = data.batch.to(device)
         out = model(x, edge_index, batch)
 
-        loss = criterion(out, y)
+        loss = criterion(out.squeeze(), y)
 
         total_batches += 1
         running_loss += loss.item()
 
         y_hat.append(list(out.cpu()))
-        y.append(list(y.cpu()))
+        y_true.append(list(y.cpu()))
 
     return running_loss / total_batches, y, y_hat
 
