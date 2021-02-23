@@ -60,9 +60,6 @@ if __name__ == "__main__":
     dataset_train = ZINC(root='/tmp/', subset=True, split="train")
     dataset_val = ZINC(root='/tmp/', subset=True, split="val")
 
-    dataset_val = GNNBenchmarkDataset(
-        root='tmp/', name=name, split="val")
-
     n_features = dataset_train.num_features
     n_class = 1
     print("number of features: ", n_features)
