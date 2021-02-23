@@ -57,8 +57,8 @@ def test(model, loader, device):
 
 if __name__ == "__main__":
 
-    dataset_train = ZINC(root='/tmp/ZINC', subset=True, split="train")
-    dataset_val = ZINC(root='/tmp/ZINC', subset=True, split="val")
+    dataset_train = ZINC(root='/tmp/', subset=True, split="train")
+    dataset_val = ZINC(root='/tmp/', subset=True, split="val")
 
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
