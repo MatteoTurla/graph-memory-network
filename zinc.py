@@ -11,7 +11,7 @@ def train(model, loader, criterion, optimizer, device):
     running_loss = total_batches = 0.0
 
     for data in loader:
-        x = data.x.to(device)
+        x = data.x.float().to(device)
         edge_index = add_self_loops(data.edge_index)[0].to(device)
 
         y = data.y.squeeze().to(device)
@@ -39,7 +39,7 @@ def test(model, loader, device):
     y_hat = []
     y = []
     for data in loader:
-        x = data.x.to(device)
+        x = data.x.float().to(device)
         edge_index = add_self_loops(data.edge_index)[0].to(device)
         y = data.y.squeeze().to(device)
         batch = data.batch.to(device)

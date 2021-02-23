@@ -5,7 +5,8 @@ import math
 def stable_neighbors_softmax(a, edge_index, n_nodes):
     # a = Q_dot_Kt_stable
     a1 = a.exp()
-    a2 = torch.zeros(n_nodes, dtype=torch.float).scatter_add_(
+    device = a.device
+    a2 = torch.zeros(n_nodes, dtype=torch.float).to(device).scatter_add_(
         0, edge_index[0], a1)
     a3 = a2[edge_index[0]]
     return a1 / a3
