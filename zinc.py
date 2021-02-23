@@ -5,7 +5,7 @@ from torch_geometric.utils import add_self_loops
 import torch
 
 
-def train(model, loader, criterion, optimizer, device):
+def train(model, loader, optimizer, criterion, device):
     model.train()
 
     running_loss = total_batches = 0.0
