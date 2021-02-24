@@ -21,11 +21,9 @@ class GMNnode(torch.nn.Module):
         )
 
         self.feed_forward = torch.nn.Sequential(OrderedDict([
-            ('end_1', torch.nn.Linear(128, 512)),
+            ('end_1', torch.nn.Linear(128, 128*2)),
             ('relu1', torch.nn.ReLU()),
-            ('end_2', torch.nn.Linear(512, 512)),
-            ('relu2', torch.nn.ReLU()),
-            ('end_3', torch.nn.Linear(512, n_class))
+            ('end_2', torch.nn.Linear(128, n_class))
         ]))
 
     def forward(self, X, edge_index):
@@ -122,9 +120,9 @@ class sageGMN(torch.nn.Module):
         )
 
         self.feed_forward = torch.nn.Sequential(OrderedDict([
-            ('end_1', torch.nn.Linear(128, 512)),
+            ('end_1', torch.nn.Linear(128, 128*2)),
             ('relu1', torch.nn.ReLU()),
-            ('end_2', torch.nn.Linear(512, n_class)),
+            ('end_2', torch.nn.Linear(128*2, n_class)),
             # ('relu2', torch.nn.ReLU()),
             # ('end_3', torch.nn.Linear(512, n_class))
         ]))
