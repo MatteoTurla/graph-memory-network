@@ -23,7 +23,7 @@ class GMNnode(torch.nn.Module):
         self.feed_forward = torch.nn.Sequential(OrderedDict([
             ('end_1', torch.nn.Linear(128, 128*2)),
             ('relu1', torch.nn.ReLU()),
-            ('end_2', torch.nn.Linear(128, n_class))
+            ('end_2', torch.nn.Linear(128*2, n_class))
         ]))
 
     def forward(self, X, edge_index):

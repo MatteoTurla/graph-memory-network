@@ -27,7 +27,7 @@ class MultiHeadAttentionLayer(torch.nn.Module):
         results = [head(X, edge_index) for head in self.heads]
 
         #embedding = self.W0(torch.cat(results, dim=1))
-        embedding = results
+        embedding = torch.cat(results, dim=1)
         add_normalize = self.normalization_layer1(X + embedding)
 
         ff = self.feed_forward(add_normalize)
