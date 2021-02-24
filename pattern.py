@@ -6,7 +6,7 @@ from utils.utils import batch_train, batch_test
 
 if __name__ == "__main__":
 
-    name = "PATTERN"
+    name = "CLUSTER"
     dataset_train = GNNBenchmarkDataset(root='tmp/', name=name)
     dataset_val = GNNBenchmarkDataset(
         root='tmp/', name=name, split="val")
@@ -22,8 +22,8 @@ if __name__ == "__main__":
     print("device: ", device)
 
     # torch geomtric dataloader
-    dataloader_train = DataLoader(dataset_train, batch_size=128, shuffle=True)
-    dataloader_val = DataLoader(dataset_val, batch_size=128)
+    dataloader_train = DataLoader(dataset_train, batch_size=4, shuffle=True)
+    dataloader_val = DataLoader(dataset_val, batch_size=256)
 
     model = GMNnode(
         n_features, n_class, n_heads=8, n_layers=10).to(device)
