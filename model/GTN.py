@@ -3,17 +3,6 @@ from torch import nn
 from torch.nn import functional as F
 
 
-class GTNconfig:
-    """ base config """
-    embd_pdrop = 0.0
-    resid_pdrop = 0.0
-    attn_pdrop = 0.0
-
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-
 class NeighborsAttention(nn.Module):
 
     def __init__(self, config):
