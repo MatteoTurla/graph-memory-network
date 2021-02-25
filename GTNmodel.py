@@ -3,6 +3,10 @@ from torch import nn
 from torch.nn import functional as F
 import math
 
+"""
+TO DO: weight init as in gpt-3, config adam optimizer and lr decay
+"""
+
 
 class GTNconfig:
     """ base config """
@@ -39,7 +43,7 @@ class NeighborsAttention(nn.Module):
         self.nunm_heads = num_heads
 
         self.dim_head = embedding_dim // num_heads
-        self.dk = math.sqrt(dim_head)
+        self.dk = math.sqrt(self.dim_head)
 
     def forward(self, x, edge_index):
 
@@ -124,7 +128,6 @@ class GTN(nn.Module):
     def forward(self, data):
 
         data.x = self.embedding(data.x)
-        print()
         data = self.blocks(data)
 
         logits = self.mlp(data.x)
