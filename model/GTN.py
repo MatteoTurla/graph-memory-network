@@ -51,6 +51,7 @@ class NeighborsAttention(nn.Module):
         att = F.softmax(att, dim=-1)
 
         y = att @ v
+
         y = y.transpose(0, 1).contiguous().view(num_nodes, embed_dim)
 
         y = self.resid_drop(self.proj(y))
