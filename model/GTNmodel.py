@@ -103,6 +103,7 @@ class GTN(nn.Module):
         input_dim = config.input_dim
         embedding_dim = config.embedding_dim
         num_layers = config.num_layers
+        num_classes = config.num_classes
 
         self.embedding = nn.Linear(input_dim, embedding_dim)
         # we should add a graph embedding and a dropout
