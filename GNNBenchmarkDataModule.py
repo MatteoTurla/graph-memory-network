@@ -38,5 +38,5 @@ class GNNBenchmarkDataModule(pl.LightningDataModule):
 
     def val_dataloader(self):
         val_loader = DataLoader(
-            self.val_dataset, batch_size=256, shuffle=False)
+            self.val_dataset, batch_size=32, shuffle=False)
         return val_loader

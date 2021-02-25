@@ -58,7 +58,8 @@ class NeighborsAttention(nn.Module):
 
         att = (q @ k.transpose(-2, -1)) * (1.0 / self.dk)
 
-        mask = torch.ones((x.shape[0], x.shape[0]), dtype=torch.bool)
+        mask = torch.ones((x.shape[0], x.shape[0]),
+                          dtype=torch.bool, device=edge_index.device, requires_grad=False)
         mask[edge_index[0, :], edge_index[1, :]] = False
 
         att = att.masked_fill(mask == True, float('-inf'))

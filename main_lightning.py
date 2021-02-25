@@ -40,7 +40,6 @@ class GTNNodeClassifier(pl.LightningModule):
                                  for acc in train_step_outputs]).mean()
         self.log("train loss", mean_loss, prog_bar=True)
         self.log("train acc", mean_acc, prog_bar=True)
-        #print("train loss:", mean_loss.item(), "train accuracy:",  mean_acc.item())
 
     def validation_step(self, batch, batch_idx):
         return self.training_step(batch, batch_idx)
@@ -51,25 +50,6 @@ class GTNNodeClassifier(pl.LightningModule):
         mean_acc = torch.Tensor([acc["accuracy"]
                                  for acc in val_step_outputs]).mean()
         self.log("val acc", mean_acc, prog_bar=True)
-        #print("validation loss:", mean_loss.item(), "validation accuracy:",  mean_acc.item())
-
-    """
-    def train_dataloader(self):
-        dataset = GNNBenchmarkDataset(root="/tmp/", name="CLUSTER")
-        for data in dataset:
-            data.edge_index = add_self_loops(data.edge_index)[0]
-        train_loader = DataLoader(dataset[:1000], batch_size=2, shuffle=True)
-
-        return train_loader
-      
-    def val_dataloader(self):
-        dataset = GNNBenchmarkDataset(root="/tmp/", name="CLUSTER", split="val")
-        for data in dataset:
-            data.edge_index = add_self_loops(data.edge_index)[0]
-        val_loader = DataLoader(dataset[:500], batch_size=256)
-
-        return val_loader
-        """
 
 
 if __name__ == "__main__":
