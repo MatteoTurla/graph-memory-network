@@ -83,12 +83,15 @@ class Block(nn.Module):
             nn.Dropout(resid_pdrop),
         )
 
-    def forward(self, x, edge_index):
+    def forward(self, data):
+        x = data.x
+        edge_index = data.edge_index
 
         x = x + self.attn(self.ln1(x), edge_index)
         x = x + self.mlp(self.ln2(x))
 
-        return x
+        data.x = x
+        return data
 
 
 class GTN(nn.Module):
@@ -115,12 +118,11 @@ class GTN(nn.Module):
         )
 
     def forward(self, data):
-        x = data.x
-        edge_index = data.edge_index
 
-        x = self.embedding(x)
-        x = self.blocks(x, edge_index)
+        data.x = self.embedding(data.x)
 
-        logits = self.mlp(x)
+        data = self.blocks(data)
+
+        logits = self.mlp(data.x)
 
         return logits
