@@ -89,9 +89,11 @@ class GTN(nn.Module):
     def __init__(self, config):
         super().__init__()
 
+        input_dim = config.input_dim
         embedding_dim = config.embedding_dim
+        num_layers = config.num_layers
 
-        self.embedding = nn.Linear(embedding_dim, embedding_dim)
+        self.embedding = nn.Linear(input_dim, embedding_dim)
         # we should add a graph embedding and a dropout
 
         # transformer layer
