@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
+import math
 
 
 class GTNconfig:
@@ -37,18 +38,21 @@ class NeighborsAttention(nn.Module):
 
         self.nunm_heads = num_heads
 
+        self.dim_head = embedding_dim // num_heads
+        self.dk = math.sqrt(dim_head)
+
     def forward(self, x, edge_index):
 
         num_nodes, embed_dim = x.size()
 
         k = self.key(x).view(num_nodes, self.nunm_heads,
-                             embed_dim // self.nunm_heads).transpose(0, 1)
+                             self.dim_head).transpose(0, 1)
         q = self.query(x).view(num_nodes, self.nunm_heads,
-                               embed_dim // self.nunm_heads).transpose(0, 1)
+                               self.dim_head).transpose(0, 1)
         v = self.value(x).view(num_nodes, self.nunm_heads,
-                               embed_dim // self.nunm_heads).transpose(0, 1)
+                               self.dim_head).transpose(0, 1)
 
-        att = (q1 @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
+        att = (q @ k.transpose(-2, -1)) * (1.0 / self.dk)
 
         mask = torch.ones((x.shape[0], x.shape[0]), dtype=torch.bool)
         mask[edge_index[0, :], edge_index[1, :]] = False
@@ -120,7 +124,7 @@ class GTN(nn.Module):
     def forward(self, data):
 
         data.x = self.embedding(data.x)
-
+        print()
         data = self.blocks(data)
 
         logits = self.mlp(data.x)
