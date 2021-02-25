@@ -3,15 +3,26 @@ from torch import nn
 from torch.nn import functional as F
 
 
+class GTNconfig:
+    """ base config """
+    embd_pdrop = 0.0
+    resid_pdrop = 0.0
+    attn_pdrop = 0.0
+
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
 class NeighborsAttention(nn.Module):
 
     def __init__(self, config):
         super().__init__()
 
-        embedding_dim = config["embedding_dim"]
-        num_heads = config["num_heads"]
-        attn_pdrop = config["attn_pdrop"]
-        resid_pdrop = config["resid_pdrop"]
+        embedding_dim = config.embedding_dim
+        num_heads = config.num_heads
+        attn_pdrop = config.attn_pdrop
+        resid_pdrop = config.resid_pdrop
 
         assert embedding_dim % num_heads == 0
 
@@ -63,8 +74,8 @@ class Block(nn.Module):
     def __init__(self, config):
         super().__init__()
 
-        embedding_dim = config["embedding_dim"]
-        resid_pdrop = config["resid_pdrop"]
+        embedding_dim = config.embedding_dim
+        resid_pdrop = config.resid_pdrop
 
         self.ln1 = nn.LayerNorm(embedding_dim)
         self.ln2 = nn.LayerNorm(embedding_dim)
@@ -89,22 +100,22 @@ class GTN(nn.Module):
     def __init__(self, config):
         super().__init__()
 
-        input_dim = config["input_dim"]
-        embedding_dim = config["embedding_dim"]
-        num_layers = config["num_layers"]
+        input_dim = config.input_dim
+        embedding_dim = config.embedding_dim
+        num_layers = config.num_layers
 
-        self.embedding = nn.Linear(input_dim, embedding_dim)
+        self.embedding = nn.Linear(embedding_dim, embedding_dim)
         # we should add a graph embedding and a dropout
 
         # transformer layer
         self.blocks = nn.Sequential(*[Block(config)
-                                      for _ in range(num_layers)])
+                                      for _ in range(config.num_layers)])
 
         # feed forward layer
         self.mlp = nn.Sequential(
             nn.Linear(embedding_dim, 2 * embedding_dim),
             nn.ReLU(),
-            nn.Linear(2 * embedding_dim, cnum_classes),
+            nn.Linear(2 * embedding_dim, config.num_classes),
         )
 
     def forward(self, data):
