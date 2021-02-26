@@ -31,6 +31,9 @@ class GNNBenchmarkDataModule(pl.LightningDataModule):
         self.val_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
                                                split="val", pre_transform=AddSelfLoops())
 
+        self.test_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
+                                                split="test", pre_transform=AddSelfLoops())
+
     def train_dataloader(self):
         train_loader = DataLoader(
             self.train_dataset, batch_size=self.batch_size, shuffle=True)
@@ -40,3 +43,8 @@ class GNNBenchmarkDataModule(pl.LightningDataModule):
         val_loader = DataLoader(
             self.val_dataset, batch_size=32, shuffle=False)
         return val_loader
+
+    def test_dataloader(self):
+        test_loader = DataLoader(
+            self.test_dataset, batch_size=32, shuffle=False)
+        return test_loader

@@ -4,7 +4,7 @@ from torch.nn import functional as F
 import math
 
 """
-TO DO: weight init as in gpt-3, config adam optimizer and lr decay
+TO DO: weight init as in gpt-3, config adam optimizer and lr decay, positional encoding of nodes
 """
 
 
