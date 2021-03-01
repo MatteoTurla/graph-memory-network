@@ -4,7 +4,7 @@ from torch.nn import functional as F
 import math
 
 """
-TO DO: weight init as in gpt-3, config adam optimizer and lr decay, positional encoding of nodes
+TO DO: weight decay based on layer's type
 """
 
 
@@ -13,6 +13,19 @@ class GTNconfig:
     embd_pdrop = 0.0
     resid_pdrop = 0.0
     attn_pdrop = 0.0
+
+    num_layers = None
+    num_heads = None
+
+    num_classes = None
+    input_dim = None
+    pos_dim = None
+    embedding_dim = None
+
+    norm = None  # layer vs batch
+    final_layer = None  # mlp vs gtp
+
+    init_weights = None  # default vs gtp custom
 
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -66,6 +79,7 @@ class NeighborsAttention(nn.Module):
         att = self.attn_drop(att)
         att = F.softmax(att, dim=-1)
 
+        # it can be added an attention dropout there in case of overfitting
         y = att @ v
 
         y = y.transpose(0, 1).contiguous().view(num_nodes, embed_dim)
@@ -82,8 +96,17 @@ class Block(nn.Module):
         embedding_dim = config.embedding_dim
         resid_pdrop = config.resid_pdrop
 
-        self.ln1 = nn.LayerNorm(embedding_dim)
-        self.ln2 = nn.LayerNorm(embedding_dim)
+        norm = config.norm
+
+        if norm == "layer":
+            self.ln1 = nn.LayerNorm(embedding_dim)
+            self.ln2 = nn.LayerNorm(embedding_dim)
+        elif norm == "batch":
+            self.ln1 = nn.BatchNorm1d(embedding_dim)
+            self.ln2 = nn.BatchNorm1d(embedding_dim)
+        else:
+            raise Exception("norm must be layer or batch")
+
         self.attn = NeighborsAttention(config)
         self.mlp = nn.Sequential(
             nn.Linear(embedding_dim, 2 * embedding_dim),
@@ -108,27 +131,55 @@ class GTN(nn.Module):
         super().__init__()
 
         input_dim = config.input_dim
+        pos_dim = config.pos_dim
         embedding_dim = config.embedding_dim
         num_layers = config.num_layers
         num_classes = config.num_classes
 
+        final_layer = config.final_layer
+
+        if final_layer == "mlp":
+            self.mlp = nn.Sequential(
+                nn.Linear(embedding_dim, 2 * embedding_dim),
+                nn.ReLU(),
+                nn.Linear(2 * embedding_dim, num_classes),
+            )
+        elif final_layer == "gtp":
+            self.mlp = nn.Sequential(
+                nn.LayerNorm(embedding_dim),
+                nn.Linear(embedding_dim, num_classes, bias=False)
+            )
+        else:
+            raise Exception("norm must be layer or batch")
+
         self.embedding = nn.Linear(input_dim, embedding_dim)
-        # we should add a graph embedding and a dropout
+        self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
 
         # transformer layer
         self.blocks = nn.Sequential(*[Block(config)
                                       for _ in range(num_layers)])
 
-        # feed forward layer
-        self.mlp = nn.Sequential(
-            nn.Linear(embedding_dim, 2 * embedding_dim),
-            nn.ReLU(),
-            nn.Linear(2 * embedding_dim, num_classes),
-        )
+        # init weights as gtp
+        if config.init_weights == "custom":
+            self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, (nn.Linear, nn.Embedding)):
+            module.weight.data.normal_(mean=0.0, std=0.02)
+            if isinstance(module, nn.Linear) and module.bias is not None:
+                module.bias.data.zero_()
+        elif isinstance(module, nn.LayerNorm):
+            module.bias.data.zero_()
+            module.weight.data.fill_(1.0)
 
     def forward(self, data):
 
-        data.x = self.embedding(data.x)
+        x_emb = self.embedding(data.x)
+        x_pos = self.pos_embedding(data.pos_enc)
+
+        data.x = x_emb + x_pos
+        # it can be added a dropout there in case of overfitting
+
         data = self.blocks(data)
 
         logits = self.mlp(data.x)
