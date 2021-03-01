@@ -18,7 +18,7 @@ class PositionalLaplacianEncoding(object):
         L = torch.sparse.FloatTensor(
             L[0], L[1], size=(num_nodes, num_nodes)).to_dense()
 
-        EigVal, EigVec = torch.eig(laplacian, eigenvectors=True)
+        EigVal, EigVec = torch.eig(L, eigenvectors=True)
         idx = EigVal[:, 0].argsort()
         ordered_eigvec = EigVec[idx]
         pos_enc = ordered_eigvec[:, :k]
