@@ -3,7 +3,7 @@ from torch_geometric.datasets import GNNBenchmarkDataset
 from torch_geometric.transforms import AddSelfLoops,  Compose
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import get_laplacian
-
+import torch
 
 class PositionalLaplacianEncoding(object):
     def __init__(self, k=2):
