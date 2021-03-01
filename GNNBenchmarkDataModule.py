@@ -21,7 +21,7 @@ class PositionalLaplacianEncoding(object):
         EigVal, EigVec = torch.eig(laplacian, eigenvectors=True)
         idx = EigVal[:, 0].argsort()
         ordered_eigvec = EigVec[idx]
-        pos_enc = ordered_eigvec[:, :k+1]
+        pos_enc = ordered_eigvec[:, :k]
 
         data["pos_enc"] = pos_enc
 

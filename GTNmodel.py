@@ -138,6 +138,13 @@ class GTN(nn.Module):
 
         final_layer = config.final_layer
 
+        self.embedding = nn.Linear(input_dim, embedding_dim)
+        self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
+
+        # transformer layer
+        self.blocks = nn.Sequential(*[Block(config)
+                                      for _ in range(num_layers)])
+
         if final_layer == "mlp":
             self.mlp = nn.Sequential(
                 nn.Linear(embedding_dim, 2 * embedding_dim),
@@ -151,13 +158,6 @@ class GTN(nn.Module):
             )
         else:
             raise Exception("norm must be layer or batch")
-
-        self.embedding = nn.Linear(input_dim, embedding_dim)
-        self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
-
-        # transformer layer
-        self.blocks = nn.Sequential(*[Block(config)
-                                      for _ in range(num_layers)])
 
         # init weights as gtp
         if config.init_weights == "custom":
