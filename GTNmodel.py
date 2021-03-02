@@ -151,7 +151,8 @@ class GTN(nn.Module):
         final_layer = config.final_layer
 
         self.embedding = nn.Linear(input_dim, embedding_dim)
-        self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
+        if config.k > 0:
+            self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
 
         # transformer layer
         self.blocks = nn.Sequential(*[Block(config)
