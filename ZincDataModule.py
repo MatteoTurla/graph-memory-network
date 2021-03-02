@@ -36,7 +36,7 @@ class ZINCDataModule(pl.LightningDataModule):
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.transforms = Compose(
-            [PositionalLaplacianEncoding(k), AddSelfLoops()])
+            [PositionalLaplacianEncoding(k)])
 
     def prepare_data(self):
 
