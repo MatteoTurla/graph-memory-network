@@ -10,7 +10,7 @@ class PositionalLaplacianEncoding(object):
         self.k = k
 
     def __call__(self, data):
-        num_nodes = data.y.shape[0]
+        num_nodes = data.x.shape[0]
 
         L = get_laplacian(
             data.edge_index, normalization="sym", num_nodes=num_nodes)
