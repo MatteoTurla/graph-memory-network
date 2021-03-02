@@ -16,22 +16,25 @@ class PositionalLaplacianEncoding(object):
         self.k = k
 
     def __call__(self, data):
-        num_nodes = data.x.shape[0]
+        if self.k == 0:
+            return data
+        else:
+            num_nodes = data.x.shape[0]
 
-        L = get_laplacian(
-            data.edge_index, normalization="sym", num_nodes=num_nodes)
+            L = get_laplacian(
+                data.edge_index, normalization="sym", num_nodes=num_nodes)
 
-        L = torch.sparse.FloatTensor(
-            L[0], L[1], size=(num_nodes, num_nodes)).to_dense()
+            L = torch.sparse.FloatTensor(
+                L[0], L[1], size=(num_nodes, num_nodes)).to_dense()
 
-        EigVal, EigVec = torch.eig(L, eigenvectors=True)
-        idx = EigVal[:, 0].argsort()
-        ordered_eigvec = EigVec[idx]
-        pos_enc = ordered_eigvec[:, :self.k]
+            EigVal, EigVec = torch.eig(L, eigenvectors=True)
+            idx = EigVal[:, 0].argsort()
+            ordered_eigvec = EigVec[idx]
+            pos_enc = ordered_eigvec[:, :self.k]
 
-        data["pos_enc"] = torch.abs(pos_enc)
+            data["pos_enc"] = torch.abs(pos_enc)
 
-        return data
+            return data
 
 
 class GNNBenchmarkDataModule(pl.LightningDataModule):

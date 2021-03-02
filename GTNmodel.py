@@ -180,6 +180,8 @@ class GTN(nn.Module):
         if config.init_weights == "custom":
             self.apply(self._init_weights)
 
+        self.k = config.k
+
     def _init_weights(self, module):
         if isinstance(module, (nn.Linear, nn.Embedding)):
             module.weight.data.normal_(mean=0.0, std=0.02)
@@ -191,10 +193,10 @@ class GTN(nn.Module):
 
     def forward(self, data):
 
-        x_emb = self.embedding(data.x)
-        x_pos = self.pos_embedding(data.pos_enc)
-
-        data.x = x_emb + x_pos
+        data.x = self.embedding(data.x)
+        if self.k > 0:
+            x_pos = self.pos_embedding(data.pos_enc)
+            data.x = data.x + x_pos
         # it can be added a dropout there in case of overfitting
 
         data = self.blocks(data)
