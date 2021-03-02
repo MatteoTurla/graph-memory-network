@@ -54,11 +54,11 @@ class GTNNodeClassifier(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         y = batch.y
 
-        # randomly flip sign as in gnnbenchmark paper
+        """# randomly flip sign as in gnnbenchmark paper
         pos_enc = batch.pos_enc
         sign_flip = torch.rand(pos_enc.size(1), device=pos_enc.device, requires_grad=False)
         sign_flip[sign_flip>=0.5] = 1.0; sign_flip[sign_flip<0.5] = -1.0
-        batch.pos_enc = pos_enc * sign_flip.unsqueeze(0)
+        batch.pos_enc = pos_enc * sign_flip.unsqueeze(0)"""
 
         logits = self(batch)
 

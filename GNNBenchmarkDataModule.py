@@ -29,7 +29,7 @@ class PositionalLaplacianEncoding(object):
         ordered_eigvec = EigVec[idx]
         pos_enc = ordered_eigvec[:, :self.k]
 
-        data["pos_enc"] = pos_enc
+        data["pos_enc"] = torch.abs(pos_enc)
 
         return data
 
