@@ -4,7 +4,7 @@ from GTNmodel import GTN, GTNconfig
 from ZincDataModule import ZINCDataModule
 from torch_geometric.nn import global_mean_pool
 
-class GTNNodeClassifier(pl.LightningModule):
+class GTNGraphRegressor(pl.LightningModule):
 
     def __init__(self, conf_dict):
         super().__init__()
@@ -12,8 +12,8 @@ class GTNNodeClassifier(pl.LightningModule):
         config = GTNconfig(**conf_dict)
         self.model = GTN(config)
         self.mlp = torch.nn.Sequential(
-                torch.nn.Linear(config.embedding_dim, config.embedding_dim*2)
-                torch.nn.ReLU()
+                torch.nn.Linear(config.embedding_dim, config.embedding_dim*2),
+                torch.nn.ReLU(),
                 torch.nn.Linear(config.embedding_dim*2, config.num_classes)
             )
         
