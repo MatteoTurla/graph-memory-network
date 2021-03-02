@@ -24,6 +24,7 @@ class PositionalLaplacianEncoding(object):
         pos_enc = ordered_eigvec[:, :self.k]
 
         data["pos_enc"] = pos_enc
+        data.x = data.x.float()
 
         return data
 
@@ -40,17 +41,16 @@ class ZINCDataModule(pl.LightningDataModule):
 
     def prepare_data(self):
 
-        ZINC(root=self.data_dir, split="train", pre_transform=self.transforms)
-        ZINC(root=self.data_dir, split="val", pre_transform=self.transforms)
-        ZINC(root=self.data_dir, split="test", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, subset=True, split="train", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, subset=True, split="val", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, subset=True, split="test", pre_transform=self.transforms)
 
     def setup(self, stage):
-        self.train_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                                                 split="train", pre_transform=self.transforms)
+        self.train_dataset = ZINC(root=self.data_dir, subset=True, split="train", pre_transform=self.transforms)
     
-        self.val_dataset = GNNBenchmarkDataset(root=self.data_dir, split="val", pre_transform=self.transforms)
+        self.val_dataset = ZINC(root=self.data_dir, subset=True, split="val", pre_transform=self.transforms)
 
-        self.test_dataset = GNNBenchmarkDataset(root=self.data_dir, split="test", pre_transform=self.transforms)
+        self.test_dataset = ZINC(root=self.data_dir, subset=True, split="test", pre_transform=self.transforms)
 
         # graph regression
         self.num_classes = 1

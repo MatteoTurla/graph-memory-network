@@ -41,7 +41,7 @@ class GTNGraphRegressor(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         y = batch.y
 
-        logits = self(batch)
+        logits = self(batch).squeeze()
 
         J = self.loss(logits, y)
 
@@ -54,7 +54,7 @@ class GTNGraphRegressor(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         y = batch.y
 
-        logits = self(batch)
+        logits = self(batch).squeeze()
 
         J = self.loss(logits, y)
         mae = self.mae_loss(logits, y)
@@ -65,7 +65,7 @@ class GTNGraphRegressor(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         y = batch.y
 
-        logits = self(batch)
+        logits = self(batch).squeeze()
 
         J = self.loss(logits, y)
         mae = self.mae_loss(logits, y)
