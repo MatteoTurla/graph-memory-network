@@ -5,6 +5,18 @@ import math
 
 """
 TO DO: weight decay based on layer's type, for now use dropout in case of overfitting
+
+hyperparametrs:
+
+embedding dim
+batch vs layer norm
+weight init
+dropout
+
+during training:
+lr and scheduling of it
+batch size
+weighted loss vs cross entropy
 """
 
 

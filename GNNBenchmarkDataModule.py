@@ -5,12 +5,18 @@ from torch_geometric.data import DataLoader
 from torch_geometric.utils import get_laplacian
 import torch
 
+"""
+hyperparameters:
+- number of eigenvector of laplacian positional encoding as described in gnnbenchamrking paper of xavier bresson
+- add self loop 
+"""
+
 class PositionalLaplacianEncoding(object):
     def __init__(self, k=2):
         self.k = k
 
     def __call__(self, data):
-        num_nodes = data.y.shape[0]
+        num_nodes = data.x.shape[0]
 
         L = get_laplacian(
             data.edge_index, normalization="sym", num_nodes=num_nodes)
