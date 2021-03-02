@@ -4,7 +4,7 @@ from torch.nn import functional as F
 import math
 
 """
-TO DO: weight decay based on layer's type
+TO DO: weight decay based on layer's type, for now use dropout in case of overfitting
 """
 
 
@@ -155,6 +155,11 @@ class GTN(nn.Module):
             self.mlp = nn.Sequential(
                 nn.LayerNorm(embedding_dim),
                 nn.Linear(embedding_dim, num_classes, bias=False)
+            )
+        elif final_layer == "graph_regression":
+            self.mlp = nn.Sequential(
+                nn.LayerNorm(embedding_dim),
+                nn.Linear(embedding_dim, embedding_dim, bias=False)
             )
         else:
             raise Exception("norm must be layer or batch")

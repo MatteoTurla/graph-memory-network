@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-from torch_geometric.datasets import GNNBenchmarkDataset
+from torch_geometric.datasets import ZINC
 from torch_geometric.transforms import AddSelfLoops,  Compose
 from torch_geometric.data import DataLoader
 from torch_geometric.utils import get_laplacian
@@ -28,12 +28,11 @@ class PositionalLaplacianEncoding(object):
         return data
 
 
-class GNNBenchmarkDataModule(pl.LightningDataModule):
+class ZINCDataModule(pl.LightningDataModule):
 
-    def __init__(self, dataset_name, batch_size=2, data_dir="/data/", k=2):
+    def __init__(self, batch_size=2, data_dir="/data/", k=2):
         super().__init__()
 
-        self.dataset_name = dataset_name
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.transforms = Compose(
@@ -41,24 +40,20 @@ class GNNBenchmarkDataModule(pl.LightningDataModule):
 
     def prepare_data(self):
 
-        GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                            split="train", pre_transform=self.transforms)
-        GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                            split="val", pre_transform=self.transforms)
-        GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                            split="test", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, split="train", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, split="val", pre_transform=self.transforms)
+        ZINC(root=self.data_dir, split="test", pre_transform=self.transforms)
 
     def setup(self, stage):
         self.train_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
                                                  split="train", pre_transform=self.transforms)
+    
+        self.val_dataset = GNNBenchmarkDataset(root=self.data_dir, split="val", pre_transform=self.transforms)
 
-        self.val_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                                               split="val", pre_transform=self.transforms)
+        self.test_dataset = GNNBenchmarkDataset(root=self.data_dir, split="test", pre_transform=self.transforms)
 
-        self.test_dataset = GNNBenchmarkDataset(root=self.data_dir, name=self.dataset_name,
-                                                split="test", pre_transform=self.transforms)
-
-        self.num_classes = self.train_dataset.num_classes
+        # graph regression
+        self.num_classes = 1
         self.num_features = self.train_dataset.num_features
 
     def train_dataloader(self):
