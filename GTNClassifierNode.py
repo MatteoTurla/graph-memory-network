@@ -10,7 +10,7 @@ class GTNNodeClassifier(pl.LightningModule):
     def __init__(self, conf_dict):
         super().__init__()
 
-        self.initial_lr = self.conf_dict["initial_lr"]
+        self.initial_lr = conf_dict["initial_lr"]
 
         config = GTNconfig(**conf_dict)
         self.model = GTN(config)
