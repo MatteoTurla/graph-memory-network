@@ -10,6 +10,8 @@ class GTNNodeClassifier(pl.LightningModule):
     def __init__(self, conf_dict):
         super().__init__()
 
+        self.initial_lr = self.conf_dict["initial_lr"]
+
         config = GTNconfig(**conf_dict)
         self.model = GTN(config)
         self.num_classes = config.num_classes
@@ -42,7 +44,7 @@ class GTNNodeClassifier(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr = 5e-4)
+        optimizer = torch.optim.Adam(self.parameters(), lr = self.initial_lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, min_lr=1e-6, patience=5)
         return {
             "optimizer": optimizer, "lr_scheduler": scheduler, "monitor": "val_loss"
