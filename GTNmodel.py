@@ -151,7 +151,7 @@ class GTN(nn.Module):
         final_layer = config.final_layer
 
         self.embedding = nn.Linear(input_dim, embedding_dim)
-        if config.k > 0:
+        if config.pos_dim > 0:
             self.pos_embedding = nn.Linear(pos_dim, embedding_dim)
 
         # transformer layer
@@ -181,7 +181,7 @@ class GTN(nn.Module):
         if config.init_weights == "custom":
             self.apply(self._init_weights)
 
-        self.k = config.k
+        self.pos_dim = config.pos_dim
 
     def _init_weights(self, module):
         if isinstance(module, (nn.Linear, nn.Embedding)):
@@ -195,7 +195,7 @@ class GTN(nn.Module):
     def forward(self, data):
 
         data.x = self.embedding(data.x)
-        if self.k > 0:
+        if self.pos_dim > 0:
             x_pos = self.pos_embedding(data.pos_enc)
             data.x = data.x + x_pos
         # it can be added a dropout there in case of overfitting
