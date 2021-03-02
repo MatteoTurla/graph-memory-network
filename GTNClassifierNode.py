@@ -1,6 +1,7 @@
 import torch
 import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional import accuracy, confusion_matrix
+from pytorch_lightning.metrics import Recall
+from pytorch_lightning.metrics.functional import confusion_matrix
 from GTNmodel import GTN, GTNconfig
 from GNNBenchmarkDataModule import GNNBenchmarkDataModule
 
@@ -15,6 +16,10 @@ class GTNNodeClassifier(pl.LightningModule):
         config = GTNconfig(**conf_dict)
         self.model = GTN(config)
         self.num_classes = config.num_classes
+
+        self.train_recall = Recall(average='macro', num_classes=config.num_classes)
+        self.val_recall = Recall(average='macro', num_classes=config.num_classes)
+        self.test_recall = Recall(average='macro', num_classes=config.num_classes)
 
         if conf_dict["weighted_loss"]:
             self.loss = self.weighted_loss
@@ -65,7 +70,7 @@ class GTNNodeClassifier(pl.LightningModule):
         J = self.loss(logits, y)
 
         logits = torch.nn.Softmax(dim=1)(logits)
-        acc = accuracy(logits, y)
+        acc = self.train_recall(logits, y)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
@@ -82,7 +87,7 @@ class GTNNodeClassifier(pl.LightningModule):
         J = self.loss(logits, y)
 
         logits = torch.nn.Softmax(dim=1)(logits)
-        acc = accuracy(logits, y)
+        acc = self.val_recall(logits, y)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
@@ -97,7 +102,7 @@ class GTNNodeClassifier(pl.LightningModule):
         J = self.loss(logits, y)
 
         logits = torch.nn.Softmax(dim=1)(logits)
-        acc = accuracy(logits, y)
+        acc = self.test_recall(logits, y)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
