@@ -32,21 +32,25 @@ class PositionalLaplacianEncoding(object):
             ordered_eigvec = EigVec[idx]
             pos_enc = ordered_eigvec[:, :self.k]
 
-            data["pos_enc"] = torch.abs(pos_enc)
+            data["pos_enc"] = pos_enc
 
             return data
 
 
 class GNNBenchmarkDataModule(pl.LightningDataModule):
 
-    def __init__(self, dataset_name, batch_size=2, data_dir="/data/", k=2):
+    def __init__(self, dataset_name, batch_size=2, data_dir="/data/", k=2, add_self_loops = False):
         super().__init__()
 
         self.dataset_name = dataset_name
         self.data_dir = data_dir
         self.batch_size = batch_size
-        self.transforms = Compose(
-            [PositionalLaplacianEncoding(k), AddSelfLoops()])
+        if add_self_loops:
+            self.transforms = Compose(
+                [PositionalLaplacianEncoding(k), AddSelfLoops()])
+        else:
+            self.transforms = Compose(
+                [PositionalLaplacianEncoding(k)])
 
     def prepare_data(self):
 
