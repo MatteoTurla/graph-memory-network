@@ -2,7 +2,7 @@ import torch
 import pytorch_lightning as pl
 from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.metrics.functional import confusion_matrix
-from GNN import GNN, GTNNconfig
+from GNN import GNN, GNNconfig
 from GNNBenchmarkDataModule import GNNBenchmarkDataModule
 
 
