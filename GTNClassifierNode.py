@@ -1,8 +1,8 @@
 import torch
 import pytorch_lightning as pl
-from pytorch_lightning.metrics import Recall
+from pytorch_lightning.metrics import Accuracy
 from pytorch_lightning.metrics.functional import confusion_matrix
-from GTNmodel import GTN, GTNconfig
+from GNN import GNN, GTNNconfig
 from GNNBenchmarkDataModule import GNNBenchmarkDataModule
 
 
@@ -11,42 +11,24 @@ class GTNNodeClassifier(pl.LightningModule):
     def __init__(self, conf_dict):
         super().__init__()
 
+        # pass to optimizer
         self.initial_lr = conf_dict["initial_lr"]
 
-        config = GTNconfig(**conf_dict)
+        # define the model
+        config = GNNconfig(**conf_dict)
         self.model = GTN(config)
-        self.num_classes = config.num_classes
 
-        self.train_recall = Recall(average='macro', num_classes=config.num_classes)
-        self.val_recall = Recall(average='macro', num_classes=config.num_classes)
-        self.test_recall = Recall(average='macro', num_classes=config.num_classes)
+        # metric to log
+        self.metric = Accuracy()
 
-        if conf_dict["weighted_loss"]:
-            self.loss = self.weighted_loss
-        else:
-            self.loss = torch.nn.CrossEntropyLoss()
+        # define loss
+        self.loss = torch.nn.CrossEntropyLoss()
 
+        # save the configutation dictionary
         self.save_hyperparameters(conf_dict)
 
     def forward(self, data):
         return self.model(data)
-
-    def weighted_loss(self, pred, label):
-
-        # calculating label weights for weighted loss computation
-        V = label.size(0)
-        label_count = torch.bincount(label)
-        label_count = label_count[torch.nonzero(label_count)].squeeze()
-        cluster_sizes = torch.zeros(self.num_classes).long().to(self.device)
-        cluster_sizes[torch.unique(label)] = label_count
-        weight = (V - cluster_sizes).float() / V
-        weight *= (cluster_sizes>0).float()
-        
-        # weighted cross-entropy for unbalanced classes
-        criterion = torch.nn.CrossEntropyLoss(weight=weight)
-        loss = criterion(pred, label)
-
-        return loss
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr = self.initial_lr)
@@ -59,23 +41,16 @@ class GTNNodeClassifier(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         y = batch.y
 
-        # randomly flip sign as in gnnbenchmark paper
-        pos_enc = batch.pos_enc
-        sign_flip = torch.rand(pos_enc.size(1), device=pos_enc.device, requires_grad=False)
-        sign_flip[sign_flip>=0.5] = 1.0; sign_flip[sign_flip<0.5] = -1.0
-        batch.pos_enc = pos_enc * sign_flip.unsqueeze(0)
-
         logits = self(batch)
 
         J = self.loss(logits, y)
 
-        logits = torch.nn.Softmax(dim=1)(logits)
-        acc = self.train_recall(logits, y)
+        y_pred = torch.nn.Softmax(dim=1)(logits)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
         self.log('train_loss', J, on_step=False, on_epoch=True, prog_bar=True, logger=False)
-        self.log('train_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=False)
+        self.log('train_acc', self.metric(y_pred, y), on_step=False, on_epoch=True, prog_bar=True, logger=False)
 
         return J
 
@@ -86,13 +61,12 @@ class GTNNodeClassifier(pl.LightningModule):
 
         J = self.loss(logits, y)
 
-        logits = torch.nn.Softmax(dim=1)(logits)
-        acc = self.val_recall(logits, y)
+        y_pred = torch.nn.Softmax(dim=1)(logits)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
         self.log('val_loss', J, on_step=False, on_epoch=True, prog_bar=True, logger=False)
-        self.log('val_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=False)
+        self.log('val_acc', self.metric(y_pred, y), on_step=False, on_epoch=True, prog_bar=True, logger=False)
 
     def test_step(self, batch, batch_idx):
         y = batch.y
@@ -101,13 +75,12 @@ class GTNNodeClassifier(pl.LightningModule):
 
         J = self.loss(logits, y)
 
-        logits = torch.nn.Softmax(dim=1)(logits)
-        acc = self.test_recall(logits, y)
+        y_pred = torch.nn.Softmax(dim=1)(logits)
 
         # logs metrics for each training_step,
         # and the average across the epoch, to the progress bar and logger
         self.log('test_loss', J, on_step=False, on_epoch=True, prog_bar=True, logger=False)
-        self.log('test_acc', acc, on_step=False, on_epoch=True, prog_bar=True, logger=False)
+        self.log('test_acc', self.metric(y_pred, y), on_step=False, on_epoch=True, prog_bar=True, logger=False)
 
         return {"logits": logits, "y": y}
 

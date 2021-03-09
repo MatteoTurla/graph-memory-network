@@ -2,8 +2,7 @@ import pytorch_lightning as pl
 from torch_geometric.datasets import GNNBenchmarkDataset
 from torch_geometric.transforms import AddSelfLoops,  Compose
 from torch_geometric.data import DataLoader
-from torch_geometric.utils import get_laplacian
-import torch
+
 
 """
 hyperparameters:
@@ -11,46 +10,23 @@ hyperparameters:
 - add self loop 
 """
 
-class PositionalLaplacianEncoding(object):
-    def __init__(self, k=2):
-        self.k = k
-
-    def __call__(self, data):
-        if self.k == 0:
-            return data
-        else:
-            num_nodes = data.x.shape[0]
-
-            L = get_laplacian(
-                data.edge_index, normalization="sym", num_nodes=num_nodes)
-
-            L = torch.sparse.FloatTensor(
-                L[0], L[1], size=(num_nodes, num_nodes)).to_dense()
-
-            EigVal, EigVec = torch.eig(L, eigenvectors=True)
-            idx = EigVal[:, 0].argsort()
-            ordered_eigvec = EigVec[idx]
-            pos_enc = ordered_eigvec[:, :self.k]
-
-            data["pos_enc"] = pos_enc
-
-            return data
-
-
 class GNNBenchmarkDataModule(pl.LightningDataModule):
 
-    def __init__(self, dataset_name, batch_size=2, data_dir="/data/", k=2, add_self_loops = False):
+    def __init__(self, dataset_name, batch_size=2, data_dir="/data/", add_self_loops = False, positional_encoding=0):
         super().__init__()
 
         self.dataset_name = dataset_name
         self.data_dir = data_dir
         self.batch_size = batch_size
+        transformations = []
+        if positional_encoding:
+            transformations.append(PositionalLaplacianEncoding(positional_encoding))
         if add_self_loops:
-            self.transforms = Compose(
-                [PositionalLaplacianEncoding(k), AddSelfLoops()])
+            transformations.append(AddSelfLoops())
+        if len(transformations):
+            self.transforms = Compose(transformations)
         else:
-            self.transforms = Compose(
-                [PositionalLaplacianEncoding(k)])
+            self.transforms = None
 
     def prepare_data(self):
 
