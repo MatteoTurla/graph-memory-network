@@ -97,7 +97,7 @@ class Block(nn.Module):
         else:
             raise Exception("norm must be layer or batch")
 
-        self.aggregator = NeighborsAttention(config)
+        self.aggregator = AttentionAggregator(config)
         self.activation = nn.ReLU()
 
     def forward(self, data):

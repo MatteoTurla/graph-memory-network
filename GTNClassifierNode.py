@@ -16,7 +16,7 @@ class GTNNodeClassifier(pl.LightningModule):
 
         # define the model
         config = GNNconfig(**conf_dict)
-        self.model = GTN(config)
+        self.model = GNN(config)
 
         # metric to log
         self.metric = Accuracy()
