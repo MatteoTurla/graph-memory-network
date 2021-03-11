@@ -62,7 +62,6 @@ class AttentionAggregator(nn.Module):
         mask[edge_index[0, :], edge_index[1, :]] = False
 
         att = att.masked_fill(mask == True, float('-inf'))
-        att = self.attn_drop(att)
         att = F.softmax(att, dim=-1)
 
         y = att @ v
